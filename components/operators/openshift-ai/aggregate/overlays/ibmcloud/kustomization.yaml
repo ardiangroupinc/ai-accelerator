@@ -15,3 +15,14 @@ patches:
     target:
       kind: OperatorGroup
       name: rhods-operator-group
+  - patch: |-
+      - op: replace
+        path: "/metadata/name"
+        value: default-dsc
+    target:
+      kind: DataScienceCluster
+      name: default
+  - path: patch-datascience-cluster.yaml
+    target:
+      kind: DataScienceCluster
+      name: default-dsc
