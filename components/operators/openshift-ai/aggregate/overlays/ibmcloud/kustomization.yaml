@@ -9,7 +9,7 @@ resources:
   - ../../../instance/overlays/eus-2.16-nvidia-gpu
 patches:
   - patch: |-
-      - op: replaceAdd commentMore actions
+      - op: replace
         path: "/metadata/name"
         value: rhods-operator
     target:
