@@ -16,3 +16,12 @@ patches:
     target:
       kind: OperatorGroup
       name: gpu-operator-certified 
+
+  - patch: |-
+      - op: replace
+        path: "/spec/installPlanApproval"
+        value: Manual
+    target:
+      kind: Subscription
+      name: gpu-operator-certified
+      namespace: nvidia-gpu-operator
