@@ -8,21 +8,22 @@ resources:
   - ../../../operator/overlays/eus-2.16
   - ../../../instance/overlays/eus-2.16-nvidia-gpu
 patches:
-  - patch: |-
+  - target:
+      kind: OperatorGroup
+      name: rhods-operator-group
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: rhods-operator
-    target:
-      kind: OperatorGroup
-      name: rhods-operator-group
-  - patch: |-
+  - target:
+      kind: DataScienceCluster
+      name: default
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: default-dsc
-    target:
-      kind: DataScienceCluster
-      name: default
-  - path: patch-datascience-cluster.yaml
-    target:
+  - target:
       kind: DataScienceCluster
       name: default-dsc
+    path: patch-datascience-cluster.yaml
+

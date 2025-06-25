@@ -11,10 +11,10 @@ resources:
   - ../../../instance/overlays/default
 
 patches:
-  - patch: |-
+  - target:
+      kind: OperatorGroup
+      name: nfd
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: openshift-nfd
-    target:
-      kind: OperatorGroup
-      name: nfd

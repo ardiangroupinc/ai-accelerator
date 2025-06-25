@@ -9,19 +9,19 @@ resources:
   - ../../../operator/overlays/stable
 
 patches:
-  - patch: |-
+  - target:
+      kind: OperatorGroup
+      name: gpu-operator-certified 
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: nvidia-gpu-operator-group
-    target:
-      kind: OperatorGroup
-      name: gpu-operator-certified 
 
-  - patch: |-
-      - op: replace
-        path: "/spec/installPlanApproval"
-        value: Manual
-    target:
+  - target:
       kind: Subscription
       name: gpu-operator-certified
       namespace: nvidia-gpu-operator
+    patch: |-
+      - op: replace
+        path: "/spec/installPlanApproval"
+        value: Manual

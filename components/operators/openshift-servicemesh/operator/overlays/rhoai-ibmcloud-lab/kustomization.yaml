@@ -6,10 +6,11 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
-  - path: patch-channel.yaml
-    target:
+  - target:
       group: operators.coreos.com
       kind: Subscription
       name: servicemeshoperator
       namespace: openshift-operators
       version: v1alpha1
+    path: patch-channel.yaml
+

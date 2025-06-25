@@ -9,10 +9,10 @@ patches:
       kind: Subscription
       name: serverless-operator
     path: patch-channel.yaml  
-  - patch: |-
+  - target:
+      kind: OperatorGroup
+      name: serverless-operator-group
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: openshift-serverless-bh62z
-    target:
-      kind: OperatorGroup
-      name: serverless-operator-group

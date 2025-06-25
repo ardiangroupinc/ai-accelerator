@@ -3,7 +3,6 @@ kind: DataScienceCluster
 metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/tracking-id: openshift-ai-operator:datasciencecluster.opendatahub.io/DataScienceCluster:redhat-ods-applications/default-dsc
   name: default-dsc
 spec:
   components:

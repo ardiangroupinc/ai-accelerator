@@ -6,17 +6,18 @@ kind: Kustomization
 resources:
   - ../../base
 patches:
-  - path: patch-channel.yaml
-    target:
+  - target:
       group: operators.coreos.com
       kind: Subscription
       name: openshift-pipelines-operator
       namespace: openshift-operators
       version: v1alpha1
-  - patch: |-
+    path: patch-channel.yaml
+
+  - target:
+      kind: Subscription
+      name: openshift-pipelines-operator
+    patch: |-
       - op: replace
         path: "/metadata/name"
         value: openshift-pipelines-operator-rh
-    target:
-      kind: Subscription
-      name: openshift-pipelines-operator
