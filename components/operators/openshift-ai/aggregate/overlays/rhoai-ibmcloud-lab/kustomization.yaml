@@ -5,8 +5,8 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
 resources:
-  - ../../../operator/overlays/eus-2.16
-  - ../../../instance/overlays/eus-2.16-nvidia-gpu
+  - ../../../operator/overlays/rhoai-ibmcloud-lab
+  - ../../../instance/overlays/rhoai-ibmcloud-lab
 patches:
   - target:
       kind: OperatorGroup
