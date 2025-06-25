@@ -5,7 +5,7 @@ namespace: openshift-gitops
 
 resources:
 - ../../base
-- ../../../components/argocd/apps/overlays/rhoai-eus-2.16-ibmcloud-gpu
+- ../../../components/argocd/apps/overlays/rhoai-ibmcloud-lab
 
 # set the repo and branch for applications
 # Uncomment patches to disable automatic sync

@@ -4,4 +4,4 @@ metadata:
   name: cluster-config-app-of-apps
 spec:
   source:
-    path: clusters/overlays/rhoai-eus-2.16-ibmcloud-gpu
+    path: clusters/overlays/rhoai-ibmcloud-lab

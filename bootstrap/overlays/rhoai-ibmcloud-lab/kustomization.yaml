@@ -3,4 +3,4 @@ kind: Kustomization
 
 resources:
 - ../../base
-- ../../../clusters/overlays/rhoai-eus-2.16-ibmcloud-gpu
+- ../../../clusters/overlays/rhoai-ibmcloud-lab
