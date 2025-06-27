@@ -1,24 +1,21 @@
 # Installing Red Hat OpenShift AI
 
-This document contains the steps for installing and configuring Red Hat OpenShift AI (RHOAI) on your existing OpenShift cluster.
+This document contains the steps for installing and configuring Red Hat OpenShift AI (RHOAI) on your existing OpenShift cluster using this ai-accelerator repository.
+
+## Assumptions
+
+1. The steps below were tested on ibmcloud RedHat Openshift managed service. So the steps assume that you will be carrying out this guide on a similiar instance. In principle, the steps should be similiar enough to work for other cloud provider and Openshift setups. For example, ARO (Azure with RedHat Openshift) or ROSA (RedHat Openshift on AWS) or Openshift on prem. However, each cloud provider may have settings that differ so look out for those. For instance, in the case of IBM Cloud please look at bootstrap option [README.md](../bootstrap/overlays/rhoai-ibmcloud-lab/README.md)
 
 ## Prerequisites
 
 ### OpenShift Cluster
 
-- (Recommended) Review [Supported Configurations](https://access.redhat.com/articles/rhoai-supported-configs) documentation.
+- It is recommended to review [RHOAI Supported Configurations documentation](https://access.redhat.com/articles/rhoai-supported-configs).
 
-- Account with appropriate permissions for installing operator and configuration installation (typically `kubeadmin`).
+- The steps require an account with appropriate permissions for installing operator and configuration installation. Typically the `kubeadmin` user that came with Openshift or if that has been disabled a user with cluster-admin role. Please see this [documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/authentication_and_authorization/using-rbac#default-roles_using-rbac) for reviewing out of the box RedHat Openshift cluster roles.
 
 - Functional storage provisioner available with a default StorageClass.
 
-> [!Note]  
-> If using GPUs (not required): This repo is designed and tested to work with AWS for provisioning additional GPU nodes. 
-> 
-> Can still act as an example to deploy GPU resources in any cloud environment or a self-hosted cluster with some minor modifications.
-
-> [!Tip]  
-> Red Hat employees can request a demo cluster using [demo.redhat.com](https://demo.redhat.com) to provision OpenShift AI. For more information see the [Red Hat Demo Environment](redhat_demo_environment.md) documentation.
 
 ### Client Tooling
 
@@ -36,47 +33,39 @@ The following are required for the bootstrap scripts. If unavailable the scripts
 
 ### Access to an OpenShift Cluster
 
-Login to the cluster using `oc login...` using an account with appropriate permissions.
+Before running the steps below make sure you are logged into the cluster as a cluster admin using `oc login...`.
 
-## Bootstrapping a Cluster
+## Instructions for Bootstrapping ArgoCD & RHOAI onto a Cluster
 
-Clone this git repository to a directory location on your local workstation, or to a [Bastion server](https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html-single/networking/index#accessing-hosts) hosted within the OpenShift cluster subnet.
+Note: The cluster may take 10-15 minutes to finish installing and updating both argocd and rhoai. It is normal for there to be a lot of progress and/or degraded states in the ArgoCD ui during the bootstrapping process and a bit time thereafter.
 
-### Run the Cluster Bootstrap
+| Steps | Notes |
+|----------|----------|
+| 1. Clone this git repository: `git clone https://github.com/ardiangroupinc/ai-accelerator.git`. | This can be cloned to your local workstation, OR to a [Bastion server](https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html-single/networking/index#accessing-hosts) hosted within the OpenShift cluster subnet. As long as the machine meets the prerequisites you shoule be fine.  |
+| 2. Change to the right directory: `cd ai-accelerator` |  |
+| 3. Run the bootstrap script: `./bootstrap.sh` | This begins the installation process. The first thing installed is an argo instance so it is expected to see argo resources created and/or configured in the standard output. |
+| 4. Select the appropriate bootstrap option and hit enter. | `./bootstrap.sh`<br>`...`<br>`1) rhoai-ibmcloud-lab`<br>`Please enter a number to select a bootstrap folder: 1` |
 
-Execute the bootstrap script to begin the installation process:
+Note: If you forked this from the original ai-accelerator project for the very first time or had others fork from your repository then you will see the below output. This project is meant to be forked and made your own so go ahead and select 1.
 
-```sh
-./bootstrap.sh
 ```
-The script defaults to using the central repository at `(https://github.com/redhat-ai-services/ai-accelerator.git)` and the main branch for GitOps configuration. If your working remote repository differs, the script will prompt you to update the GitOps configuration to match. Selecting this option will:
-
-- Update the repository and branch in `cluster-config-app-of-apps`.
-- Commit the changes locally.
-- Require you to push the updated file `cluster-config-app-of-apps` in the main branch of your remote central repository before submitting a pull request.
-
-When prompted to select a bootstrap folder, choose the overlay that matches your cluster version, for example: `bootstrap/overlays/rhoai-eus-2.8/`.
-
-The `bootstrap.sh` script will :
-- check for an existing OpenShift GitOps Operator installation
-- install the OpenShift GitOps Operator if there is not already an existing installation and create an ArgoCD instance once the operator is deployed in the `openshift-gitops` namespace
-- bootstrap a set of ArgoCD applications to configure the cluster.
-
-Once the script completes, verify that you can access the ArgoCD UI using the URL output by the last line of the script execution.
-
-This URL should present an ArgoCD login page, showing that it was successfully deployed.
-
-TODO: Add in details for the ArgoCD application menu tile within the OCP web console.
-
-Alternatively you can also obtain the ArgoCD login URL from the ArgoCD route:
-
-```sh
-oc get routes openshift-gitops-server -n openshift-gitops
+...
+Your current working branch is main, and your cluster overlay branch is example-branch.
+Do you wish to update it to main?
+1) Yes
+2) No
+Please enter a number to select: 1
+...
 ```
 
-Use the OpenShift Login option and sign in with your OpenShift credentials.
+The script does some waiting on argo components before completing. Eventually you should see the following output with a link to ArgoCD.
+```
+...
+GitOps has successfully deployed!  Check the status of the sync here:
+https://openshift-gitops-server-openshift-gitops.voicd-us-east-3-4cb626ac15bdff235c2f3fba02223e28-0000.us-east.containers.appdomain.cloud
+```
 
-The cluster may take 10-15 minutes to finish installing and updating.
+
 
 ## Updating the ArgoCD Groups
 
