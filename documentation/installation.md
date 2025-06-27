@@ -2,6 +2,12 @@
 
 This document contains the steps for installing and configuring Red Hat OpenShift AI (RHOAI) on your existing OpenShift cluster using this ai-accelerator repository.
 
+## Table of Contents
+
+- [Assumptions](#assumptions)
+- [Prerequisites](#prerequisites)
+- [Instructions](#instructions)
+
 ## Assumptions
 
 * The steps below were tested on ibmcloud RedHat Openshift managed service. So the steps assume that you will be carrying out this guide on a similiar instance. In principle, the steps should be similiar enough to work for other cloud provider and Openshift setups. For example, ARO (Azure with RedHat Openshift) or ROSA (RedHat Openshift on AWS) or Openshift on prem. However, each cloud provider may have settings that differ so look out for those. For instance, read this [document](../bootstrap/overlays/rhoai-ibmcloud-lab/README.md) to see some of the hiccups we had using ai-accelerator for IBM Cloud Openshift Managed instance.
@@ -35,9 +41,9 @@ The following are required for the bootstrap scripts. If unavailable the scripts
 
 Before running the steps below make sure you are logged into the cluster as a cluster admin using `oc login...`.
 
-## Instructions for Bootstrapping ArgoCD & RHOAI onto a Cluster
+## Instructions
 
-Note: The cluster may take 10-15 minutes to finish installing and updating both argocd and rhoai. It is normal for there to be a lot of progress and/or degraded states in the ArgoCD ui during the bootstrapping process and a bit time thereafter.
+Note: After executing these steps, the cluster may still take 10-15 minutes to finish installing/updating both argocd and rhoai. It is normal for there to be a lot of progress and/or degraded states in the ArgoCD ui during the bootstrapping process and a bit time thereafter.
 
 | Steps | Notes |
 |----------|----------|
@@ -64,3 +70,17 @@ The script does some waiting on argo components before completing. Eventually yo
 GitOps has successfully deployed!  Check the status of the sync here:
 https://openshift-gitops-server-openshift-gitops.voicd-us-east-3-4cb626ac15bdff235c2f3fba02223e28-0000.us-east.containers.appdomain.cloud
 ```
+
+You can also access either argocd or rhoai by issuing the following oc commands respectively.
+```
+$ oc get routes/openshift-gitops-server -n openshift-gitops
+```
+
+```
+$ oc get routes/rhods-dashboard -n redhat-ods-applications
+```
+
+
+
+Alternatively, access argocd or rhoai via the grid button on the Openshift cluster.
+![AI Accelerator Overview](images/accessing-rhoai-or-argocd.png)
