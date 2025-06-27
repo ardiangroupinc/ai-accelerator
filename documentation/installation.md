@@ -82,5 +82,5 @@ $ oc get routes/rhods-dashboard -n redhat-ods-applications
 
 
 
-Alternatively, access argocd or rhoai via the grid button on the Openshift cluster.
+Alternatively, access argocd or rhoai via the grid button on the Openshift cluster webconsole.
 ![AI Accelerator Overview](images/accessing-rhoai-or-argocd.png)
