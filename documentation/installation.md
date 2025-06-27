@@ -4,7 +4,7 @@ This document contains the steps for installing and configuring Red Hat OpenShif
 
 ## Assumptions
 
-1. The steps below were tested on ibmcloud RedHat Openshift managed service. So the steps assume that you will be carrying out this guide on a similiar instance. In principle, the steps should be similiar enough to work for other cloud provider and Openshift setups. For example, ARO (Azure with RedHat Openshift) or ROSA (RedHat Openshift on AWS) or Openshift on prem. However, each cloud provider may have settings that differ so look out for those. For instance, in the case of IBM Cloud please look at bootstrap option [README.md](../bootstrap/overlays/rhoai-ibmcloud-lab/README.md)
+* The steps below were tested on ibmcloud RedHat Openshift managed service. So the steps assume that you will be carrying out this guide on a similiar instance. In principle, the steps should be similiar enough to work for other cloud provider and Openshift setups. For example, ARO (Azure with RedHat Openshift) or ROSA (RedHat Openshift on AWS) or Openshift on prem. However, each cloud provider may have settings that differ so look out for those. For instance, read this [document](../bootstrap/overlays/rhoai-ibmcloud-lab/README.md) to see some of the hiccups we had using ai-accelerator for IBM Cloud Openshift Managed instance.
 
 ## Prerequisites
 
@@ -64,51 +64,3 @@ The script does some waiting on argo components before completing. Eventually yo
 GitOps has successfully deployed!  Check the status of the sync here:
 https://openshift-gitops-server-openshift-gitops.voicd-us-east-3-4cb626ac15bdff235c2f3fba02223e28-0000.us-east.containers.appdomain.cloud
 ```
-
-
-
-## Updating the ArgoCD Groups
-
-Argo creates the following group in OpenShift to grant access and control inside of ArgoCD:
-
-- gitops-admins
-
-To add a user to the admin group run:
-
-```sh
-oc adm groups add-users gitops-admins $(oc whoami)
-```
-
-To add a user to the user group run:
-
-```sh
-oc adm groups add-users argocdusers $(oc whoami)
-```
-
-Once the user has been added to the group logout of Argo and log back in to apply the updated permissions. Validate that you have the correct permissions by going to `User Info` menu inside of Argo to check the user permissions.
-
-## Accessing Argo using the CLI
-
-To log into ArgoCD using the `argocd` cli tool run the following command:
-
-```sh
-argocd login --sso <argocd-route> --grpc-web
-```
-
-## ArgoCD Troubleshooting
-
-### Operator Shows Progressing for a Very Long Time
-
-ArgoCD Symptoms:
-
-Argo Applications and the child subscription object for operator installs show `Progressing` for a very long time.
-
-Explanation:
-
-Argo utilizes a `Health Check` to validate if an object has been successfully applied and updated, failed, or is progressing by the cluster.  The health check for the `Subscription` object looks at the `Condition` field in the `Subscription` which is updated by the `OLM`.  Once the `Subscription` is applied to the cluster, `OLM` creates several other objects in order to install the Operator.  Once the Operator has been installed `OLM` will report the status back to the `Subscription` object.  This reconciliation process may take several minutes even after the Operator has successfully installed.
-
-Resolution/Troubleshooting:
-
-- Validate that the Operator has successfully installed via the `Installed Operators` section of the OpenShift Web Console.
-- If the Operator has not installed, additional troubleshooting is required.
-- If the Operator has successfully installed, feel free to ignore the `Progressing` state and proceed.  `OLM` should reconcile the status after several minutes and Argo will update the state to `Healthy`.
