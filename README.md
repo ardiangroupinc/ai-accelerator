@@ -6,8 +6,7 @@ You can learn more about the project setup and/or howtos by clicking on the guid
 
 ## How Tos
 * [Installation Guide](documentation/installation.md) - containing step by step instructions for executing this `bootstrap.sh` installation sequence on your cluster in order to install RHOAI and related operators on it.
-
-![AI Accelerator Overview](documentation/diagrams/AI_Accelerator.drawio.png)
+* [ArgoCD Howtos](documentation/configuring-argo.md#argocd-howtos) - What argo settings should we be aware of and how do we change them?
 
 ## Additional Documentation and Info
 * [Overview](documentation/overview.md) - What's inside this repository?

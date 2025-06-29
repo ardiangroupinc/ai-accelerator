@@ -84,3 +84,8 @@ $ oc get routes/rhods-dashboard -n redhat-ods-applications
 
 Alternatively, access argocd or rhoai via the grid button on the Openshift cluster webconsole.
 ![AI Accelerator Overview](images/accessing-rhoai-or-argocd.png)
+
+
+The following diagram illustrates all the core components that have been put in place after the `bootstrap.sh` is done:
+
+![AI Accelerator Overview](./diagrams/AI_Accelerator.drawio.png)
