@@ -10,7 +10,8 @@ You can learn more about the project setup and/or howtos by clicking on the guid
 ![AI Accelerator Overview](documentation/diagrams/AI_Accelerator.drawio.png)
 
 ## Additional Documentation and Info
-* [Overview](documentation/overview.md) - what's inside this repository?
+* [Overview](documentation/overview.md) - What's inside this repository?
+* [ArgoCD Setup](documentation/configuring-argo.md) - What argo settings should we be aware of and how do we change them?
 
 ### Operators
 
