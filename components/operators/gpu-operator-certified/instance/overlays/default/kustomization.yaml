@@ -6,3 +6,4 @@ resources:
 
 components:
   - ../../components/schedule-on-tainted-nodes
+  # - ../../components/monitoring-dashboard
