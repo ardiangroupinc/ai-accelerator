@@ -3,3 +3,6 @@ kind: Kustomization
 
 resources:
   - fharo-testing-dspa.yaml
+  - fharo-testing-iris-data-connection.yaml
+  - fharo-testing-inferenceservice.yaml
+  - fharo-testing-servingruntime.yaml

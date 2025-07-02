@@ -1,0 +1,19 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: iris-data-connection
+  namespace: fharo-testing
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    opendatahub.io/connection-type-ref: s3
+    openshift.io/description: ''
+    openshift.io/display-name: iris-data-connection
+data:
+  AWS_ACCESS_KEY_ID: bWluaW8=
+  AWS_S3_BUCKET: cGlwZWxpbmVz
+  AWS_S3_ENDPOINT: aHR0cDovL21pbmlvLmRldi1zMy1vYmplY3QtZGF0YXN0b3JlLnN2Yy5jbHVzdGVyLmxvY2FsOjkwMDA=
+  AWS_SECRET_ACCESS_KEY: bWluaW8xMjM=
+type: Opaque
