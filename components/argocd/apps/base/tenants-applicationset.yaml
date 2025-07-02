@@ -41,6 +41,10 @@ spec:
       destination:
         server: https://kubernetes.default.svc
       ignoreDifferences:
+        - kind: InferenceService
+          group: serving.kserve.io
+          jqPathExpressions:
+            - .spec.predictor.model.storage.path
         - kind: Notebook
           group: kubeflow.org
           jqPathExpressions:
