@@ -8,13 +8,6 @@ resources:
   - ../../../instance/overlays/default
   - ../../../operator/overlays/stable
 
-configMapGenerator:
-  - name: nvidia-dcgm-exporter-dashboard
-    namespace: openshift-config-managed
-    behavior: replace
-    files:
-      - https://github.com/NVIDIA/dcgm-exporter/raw/main/grafana/dcgm-exporter-dashboard.json
-
 patches:
   - target:
       kind: OperatorGroup
