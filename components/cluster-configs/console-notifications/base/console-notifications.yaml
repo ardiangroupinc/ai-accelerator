@@ -1,0 +1,10 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: ardiangroup-ibmcloud-cluster-banner
+spec:
+  backgroundColor: '#FF5733'
+  color: '#000'
+  location: BannerTop
+  text: |
+    AdrianGroup | IBMCLOUD Openshift Cluster
