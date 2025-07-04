@@ -25,3 +25,4 @@ patches:
       - op: replace
         path: "/spec/installPlanApproval"
         value: Manual
+  

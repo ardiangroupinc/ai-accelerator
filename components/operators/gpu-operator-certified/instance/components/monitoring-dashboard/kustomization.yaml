@@ -13,3 +13,7 @@ configMapGenerator:
     namespace: openshift-config-managed
     files:
       - https://github.com/NVIDIA/dcgm-exporter/raw/main/grafana/dcgm-exporter-dashboard.json
+  - name: nvidia-dcgm-exporter-dashboard
+    namespace: nvidia-gpu-operator
+    files:
+      - https://github.com/NVIDIA/dcgm-exporter/raw/main/grafana/dcgm-exporter-dashboard.json
