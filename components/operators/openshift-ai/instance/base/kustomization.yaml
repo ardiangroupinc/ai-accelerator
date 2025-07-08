@@ -8,3 +8,5 @@ resources:
   - dsc-init.yaml
   - namespace.yaml
   - odhdashboardconfig.yaml
+  - admingroupcluster-role.yaml
+  - admingroupcluster-rolebinding.yaml
