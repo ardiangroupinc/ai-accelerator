@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admingroupcluster-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: admingroupcluster-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: voicd-datascientists
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: rhods-admins
