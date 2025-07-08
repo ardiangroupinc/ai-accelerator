@@ -10,3 +10,5 @@ resources:
   - odhdashboardconfig.yaml
   - admingroupcluster-role.yaml
   - admingroupcluster-rolebinding.yaml
+  - rhods-admins-group.yaml
+  - voicd-datascientist-group.yaml
