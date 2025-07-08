@@ -38,3 +38,8 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: openshift-gitops
+      ignoreDifferences:
+        - kind: Group
+          group: rbac.authorization.k8s.io
+          jqPathExpressions:
+            - .users

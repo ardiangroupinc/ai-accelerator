@@ -4,6 +4,8 @@ metadata:
   name: auth
 spec:
   adminGroups:
+    - voicd-datascientists
     - rhods-admins
   allowedGroups:
+    - voicd-datascientists
     - 'system:authenticated'

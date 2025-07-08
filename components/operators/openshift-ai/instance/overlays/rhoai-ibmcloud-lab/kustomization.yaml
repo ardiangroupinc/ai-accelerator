@@ -18,4 +18,5 @@ components:
   - ../../components/rhoai-dashboard-access
   - ../../components/auth-with-authorino
   - ../../components/runtime-template-triton
+  - ../../components/rhoai-auth
 
