@@ -13,7 +13,7 @@ spec:
   source:
     path: patch-me-see-overlays
     repoURL: https://github.com/ardiangroupinc/ai-accelerator.git
-    targetRevision: xyz
+    targetRevision: main
   syncPolicy:
     automated:
       prune: false
