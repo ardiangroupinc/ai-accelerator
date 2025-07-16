@@ -62,4 +62,4 @@ To get the change in names we used kustomizes patching feature. To see an exampl
 
 Note: Keep in mind certain acronyms below:
 * ROKS is short for Red Hat Openshift Kubernetes Service. You can read more [here](https://cloud.ibm.com/docs/openshift?topic=openshift-getting-started&utm_source=chatgpt.com).
-* RHOAI is short for Red Hat Openshift AI. You can read more [here]() and [here]().
+* RHOAI is short for Red Hat Openshift AI. You can read more [here](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.19).
