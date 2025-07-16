@@ -4,7 +4,11 @@ In this document you will find settings that were chosen for the ArgoCD instance
 
 ## ArgoCD Setup
 
-The starting kustomize folder of the default argocd configuration and settings inherited from ai-accelerator are located [here](../components/argocd/apps/overlays/rhoai-ibmcloud-lab). 
+The starting kustomize folder of the default argocd configuration and settings inherited from ai-accelerator are located [here](https://github.com/redhat-ai-services/ai-accelerator/tree/main/components/operators/openshift-gitops/aggregate/overlays/rhdp)
+
+The resulting argocd configuration is located at the following folder locations:
+* [Aggregates the operator configuration as well as the argocd/gitops instance application yaml content](https://github.com/ardiangroupinc/ai-accelerator/tree/main/components/operators/openshift-gitops/aggregate/overlays/rhoai-ibmcloud-lab)
+* [Defines the Argocd Applications for the app of apps](https://github.com/ardiangroupinc/ai-accelerator/tree/main/components/argocd/apps/overlays/rhoai-ibmcloud-lab).
 
 Some key points are as follows:
 1. The app of apps pattern was chosen as a Gitops strategy. Information on what that pattern is can be found [here](https://argo-cd.readthedocs.io/en/latest/operator-manual/cluster-bootstrapping/) and [here](https://github.com/gnunn-gitops/standards/blob/master/folders.md). After `bootstrap.sh` is ran the first thing it does is setup argocd with this structure presupposing this Gitops strategy.
