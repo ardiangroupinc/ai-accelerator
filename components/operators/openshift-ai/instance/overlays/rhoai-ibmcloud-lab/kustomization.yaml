@@ -6,6 +6,19 @@ namespace: redhat-ods-applications
 resources:
   - ../../base
 
+patches:
+  # OdhDashboardConfig CRD is removed in IBM Cloud managed RHOAI. Dashboard
+  # config is handled via the DataScienceCluster spec instead.
+  - patch: |-
+      $patch: delete
+      apiVersion: opendatahub.io/v1alpha
+      kind: OdhDashboardConfig
+      metadata:
+        name: odh-dashboard-config
+    target:
+      kind: OdhDashboardConfig
+      name: odh-dashboard-config
+
 components:
   - ../../components/components-serving
   - ../../components/components-training

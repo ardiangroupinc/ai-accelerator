@@ -5,16 +5,11 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
 resources:
-  - ../../../operator/overlays/rhoai-ibmcloud-lab
+  # operator overlay removed: IBM Cloud manages the rhods-operator subscription,
+  # OperatorGroup, and namespace via the managed add-on. Manual Subscription is
+  # blocked by ibm-operators-subscriptions-policy.
   - ../../../instance/overlays/rhoai-ibmcloud-lab
 patches:
-  - target:
-      kind: OperatorGroup
-      name: rhods-operator-group
-    patch: |-
-      - op: replace
-        path: "/metadata/name"
-        value: rhods-operator
   - target:
       kind: DataScienceCluster
       name: default
