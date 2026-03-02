@@ -43,3 +43,9 @@ spec:
           group: rbac.authorization.k8s.io
           jqPathExpressions:
             - .users
+        - kind: OperatorGroup
+          group: operators.coreos.com
+          name: rhods-operator
+          namespace: redhat-ods-operator
+          jqPathExpressions:
+            - .
