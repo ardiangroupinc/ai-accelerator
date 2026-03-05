@@ -28,4 +28,4 @@ patches:
       - op: add
         path: /metadata/annotations
         value:
-          argocd.argoproj.io/sync-options: Skip
+          argocd.argoproj.io/sync-options: ServerSideApply=true
