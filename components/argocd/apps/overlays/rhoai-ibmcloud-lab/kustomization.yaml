@@ -21,3 +21,7 @@ patches:
     target:
       kind: ApplicationSet
       name: tenants
+  - path: patch-operators-ignoredifferences.yaml
+    target:
+      kind: ApplicationSet
+      name: cluster-operators
