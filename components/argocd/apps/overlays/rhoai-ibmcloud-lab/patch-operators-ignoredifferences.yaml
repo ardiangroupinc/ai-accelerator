@@ -16,5 +16,4 @@
     group: console.openshift.io
     name: pipelines-console-plugin
     jqPathExpressions:
-      - .metadata.ownerReferences
-      - .spec.proxy
+      - .
