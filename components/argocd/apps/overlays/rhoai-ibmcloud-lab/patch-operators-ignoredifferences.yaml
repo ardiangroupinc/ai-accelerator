@@ -5,8 +5,7 @@
     group: ""
     name: redhat-ods-operator
     jqPathExpressions:
-      - .metadata.labels
-      - .metadata.annotations
+      - .
 - op: add
   path: /spec/template/spec/ignoreDifferences/-
   value:
