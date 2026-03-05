@@ -4,3 +4,12 @@ kind: Kustomization
 resources:
   - ../../../instance/overlays/rhoai-ibmcloud-lab
   - ../../../operator/overlays/latest
+
+patches:
+  - target:
+      kind: Job
+      name: job-gitops-console-plugin
+    patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-options
+        value: Replace=true
