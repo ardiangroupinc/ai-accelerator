@@ -11,5 +11,8 @@ patches:
       name: job-gitops-console-plugin
     patch: |-
       - op: add
-        path: /metadata/annotations/argocd.argoproj.io~1sync-options
-        value: Replace=true
+        path: /metadata/annotations/argocd.argoproj.io~1hook
+        value: PostSync
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1hook-delete-policy
+        value: BeforeHookCreation
