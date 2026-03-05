@@ -21,3 +21,11 @@ patches:
       - op: replace
         path: "/metadata/name"
         value: openshift-pipelines-operator-rh
+  - target:
+      kind: ConsolePlugin
+      name: pipelines-console-plugin
+    patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-options: Skip

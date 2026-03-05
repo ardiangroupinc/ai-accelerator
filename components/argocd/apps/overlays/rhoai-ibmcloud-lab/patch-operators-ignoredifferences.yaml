@@ -1,6 +1,15 @@
 - op: add
   path: /spec/template/spec/ignoreDifferences/-
   value:
+    kind: Namespace
+    group: ""
+    name: redhat-ods-operator
+    jqPathExpressions:
+      - .metadata.labels
+      - .metadata.annotations
+- op: add
+  path: /spec/template/spec/ignoreDifferences/-
+  value:
     kind: ClusterRole
     group: rbac.authorization.k8s.io
     name: admingroupcluster-role
