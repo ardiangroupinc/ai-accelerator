@@ -3,4 +3,3 @@ kind: Kustomization
 
 resources:
   - dev-s3-object-datastore.yaml
-  - fharo-testing.yaml
