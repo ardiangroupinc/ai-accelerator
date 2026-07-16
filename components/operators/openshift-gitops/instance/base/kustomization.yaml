@@ -3,5 +3,6 @@ kind: Kustomization
 
 namespace: openshift-gitops
 
-resources:
-  - openshift-gitops.yaml
+# Commenting out the below in order to let the LZTVP own the gitops-operator
+# resources:
+#   - openshift-gitops.yaml
