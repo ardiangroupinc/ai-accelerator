@@ -25,8 +25,8 @@ resources:
 configMapGenerator:
   - name: gitops-repo-config
     literals:
-      - repoURL=https://github.com/redhat-ai-services/ai-accelerator.git
-      - targetRevision=main
+      - repoURL=https://github.com/ardiangroupinc/ai-accelerator.git
+      - targetRevision=LZTVP-mod
 
 replacements:
   # copy the repo from the application to the applicationsets
