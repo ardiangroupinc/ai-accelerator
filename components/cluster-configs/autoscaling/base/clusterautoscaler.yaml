@@ -12,16 +12,19 @@ spec:
   # voicdgroupinc/voicd-ops (openshift/machinesets) could not have grown.
   #
   # Sized to the declared maxima of every pool so those bounds are reachable:
-  #   3 masters              bx2-16x64      48 cores /  192 GiB
-  #   4 general workers      bx2-16x64      64 cores /  256 GiB
-  #   9 voicd-services (3/zone) bx4-16x64  144 cores /  576 GiB
-  #   2 GPU                  gx3-16x80x1l4  32 cores /  160 GiB
-  #                                     = 18 nodes / 288 cores / 1184 GiB
+  #   3 masters                 bx2-16x64      48 cores /  192 GiB
+  #   4 general workers         bx2-16x64      64 cores /  256 GiB
+  #   9 voicd-services (3/zone) bx2-16x64     144 cores /  576 GiB
+  #   2 GPU                     gx3-16x80x1l4  32 cores /  160 GiB
+  #                                        = 18 nodes / 288 cores / 1184 GiB
   # These are guard rails, not reservations — nothing is provisioned until a
-  # pending pod justifies it. Headroom left on cores/memory so a profile change
-  # does not silently re-cap the cluster.
+  # pending pod justifies it, so headroom costs nothing and a limit that binds
+  # unexpectedly costs an outage. maxNodesTotal is 24 rather than exactly 18
+  # because the general worker sets are scaled by hand (`oc scale … worker-1`) and
+  # a ceiling equal to the current maximum turns any such bump into a silent
+  # scale-up failure for every OTHER pool.
   resourceLimits:
-    maxNodesTotal: 18
+    maxNodesTotal: 24
     cores:
       min: 0
       max: 320
