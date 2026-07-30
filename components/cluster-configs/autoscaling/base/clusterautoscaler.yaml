@@ -4,14 +4,31 @@ metadata:
   name: default
 spec:
   podPriorityThreshold: -10
+  # ARCH-511: these are the cluster-wide ceiling for every MachineAutoscaler, and
+  # they were set below the cluster's actual size — maxNodesTotal was 7 with 7
+  # nodes already running (3 masters + 4 workers), and cores/memory were 96/384
+  # against a real 112/448. A cluster-autoscaler at its limit does not warn; it
+  # simply never scales up, so the voicd-services and GPU pools added in
+  # voicdgroupinc/voicd-ops (openshift/machinesets) could not have grown.
+  #
+  # Sized to the declared maxima of every pool so those bounds are reachable:
+  #   3 masters              bx2-16x64      48 cores /  192 GiB
+  #   4 general workers      bx2-16x64      64 cores /  256 GiB
+  #   9 voicd-services (3/zone) bx4-16x64  144 cores /  576 GiB
+  #   2 GPU                  gx3-16x80x1l4  32 cores /  160 GiB
+  #                                     = 18 nodes / 288 cores / 1184 GiB
+  # These are guard rails, not reservations — nothing is provisioned until a
+  # pending pod justifies it. Headroom left on cores/memory so a profile change
+  # does not silently re-cap the cluster.
   resourceLimits:
-    maxNodesTotal: 7
+    maxNodesTotal: 18
     cores:
       min: 0
-      max: 96
+      max: 320
     memory:
       min: 0
-      max: 384
+      max: 1280
+    # Matches the workergpu-1 MachineAutoscaler's maxReplicas (1 L4 per node).
     gpus:
       - type: nvidia.com/gpu
         min: 0
