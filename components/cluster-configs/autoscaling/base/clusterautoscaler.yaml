@@ -32,8 +32,13 @@ spec:
       min: 0
       max: 1280
     # Matches the workergpu-1 MachineAutoscaler's maxReplicas (1 L4 per node).
+    # ARCH-521: the type here is NOT the extended resource name — the autoscaler
+    # accounts GPU limits under the value of the node's `cluster-api/accelerator`
+    # label (a label value cannot contain "/", so nvidia.com/gpu could never
+    # match). Must stay in sync with the label set on workergpu-1 in
+    # voicdgroupinc/voicd-ops (openshift/machinesets/workergpu-1.yaml).
     gpus:
-      - type: nvidia.com/gpu
+      - type: nvidia-l4
         min: 0
         max: 2
   scaleDown:
