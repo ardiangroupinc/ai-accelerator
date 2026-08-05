@@ -38,9 +38,12 @@ spec:
     # match). Must stay in sync with the label set on workergpu-1 in
     # voicdgroupinc/voicd-ops (openshift/machinesets/workergpu-1.yaml).
     gpus:
+      # ARCH-526: with device-plugin time-slicing (replicas: 4, see the
+      # gpu-operator-certified instance config) the autoscaler counts VIRTUAL
+      # GPUs — each physical L4 shows as 4. Max = 2 nodes x 4 slots.
       - type: nvidia-l4
         min: 0
-        max: 2
+        max: 8
   scaleDown:
     enabled: true
     delayAfterAdd: 5m
