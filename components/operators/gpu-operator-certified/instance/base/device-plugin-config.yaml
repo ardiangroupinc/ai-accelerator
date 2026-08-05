@@ -3,4 +3,18 @@ kind: ConfigMap
 metadata:
   name: device-plugin-config
   namespace: nvidia-gpu-operator
-data: {}
+data:
+  # ARCH-526: time-slice each physical GPU into 4 schedulable slots so
+  # multiple ModelAgent pods can share one card. Time-slicing gives NO
+  # memory or fault isolation — the per-pod VRAM budget (L4: ~5.7GB,
+  # L40S: ~12GB) is enforced by workload discipline, not hardware.
+  # Referenced by ClusterPolicy spec.devicePlugin.config.
+  time-sliced-4: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        resources:
+          - name: nvidia.com/gpu
+            replicas: 4

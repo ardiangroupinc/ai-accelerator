@@ -53,9 +53,11 @@ spec:
     virtualTopology:
       config: ''
   devicePlugin:
+    # ARCH-526: point the device plugin at the time-slicing profile so each
+    # physical GPU advertises 4 schedulable nvidia.com/gpu slots.
     config:
-      default: ''
-      name: ''
+      default: 'time-sliced-4'
+      name: 'device-plugin-config'
     enabled: true
     mps:
       root: /run/nvidia/mps
