@@ -18,3 +18,23 @@ data:
         resources:
           - name: nvidia.com/gpu
             replicas: 4
+  # ARCH-557: a second, denser profile. Nothing uses it by default — the
+  # ClusterPolicy default stays time-sliced-4, so a node only gets this by
+  # carrying the label `nvidia.com/device-plugin.config: time-sliced-8`, which
+  # OpsPortal applies to the nodes of the pools created for it (gpu-l40s-8,
+  # gpu-2l4-8). That is what lets one cluster run two different splits at once.
+  #
+  # Replicas are PER PHYSICAL GPU, so slots per node = replicas x cards:
+  #   gx3-24x120x1l40s  1x L40S 48GB  ->  8 slots, ~5.75 GiB each
+  #   gx3-32x160x2l4    2x L4   24GB  -> 16 slots, ~2.8 GiB each
+  # The 2x L4 figure is below every model VRAM measurement taken so far; that
+  # pool exists to make the split selectable, not because a model fits in it.
+  time-sliced-8: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        resources:
+          - name: nvidia.com/gpu
+            replicas: 8
