@@ -18,18 +18,28 @@ data:
         resources:
           - name: nvidia.com/gpu
             replicas: 4
-  # ARCH-557: a second, denser profile. Nothing uses it by default — the
-  # ClusterPolicy default stays time-sliced-4, so a node only gets this by
-  # carrying the label `nvidia.com/device-plugin.config: time-sliced-8`, which
-  # OpsPortal applies to the nodes of the pools created for it (gpu-l40s-8,
-  # gpu-2l4-8). That is what lets one cluster run two different splits at once.
+  # ARCH-557: a second, coarser profile for the pools that need a big slot.
+  # Nothing uses it by default — the ClusterPolicy default stays time-sliced-4,
+  # so a node only gets this by carrying the label
+  # `nvidia.com/device-plugin.config: time-sliced-2`, which OpsPortal applies to
+  # the nodes of the pools created for it (gpu-l40s-2, gpu-2l4-2). That is what
+  # lets one cluster run two different splits at once.
   #
   # Replicas are PER PHYSICAL GPU, so slots per node = replicas x cards:
-  #   gx3-24x120x1l40s  1x L40S 48GB  ->  8 slots, ~5.75 GiB each
-  #   gx3-32x160x2l4    2x L4   24GB  -> 16 slots, ~2.8 GiB each
-  # The 2x L4 figure is below every model VRAM measurement taken so far; that
-  # pool exists to make the split selectable, not because a model fits in it.
-  time-sliced-8: |-
+  #   gx3-24x120x1l40s  1x L40S 48GB  ->  2 slots, ~22.5 GiB each
+  #   gx3-32x160x2l4    2x L4   24GB  ->  4 slots, ~11.25 GiB each
+  #
+  # Sized from measurement, not headroom guessing (ARCH-558: every ModelAgent
+  # job type probed at 5ms on a real analyzer path). The two numbers that set
+  # these boundaries:
+  #   A_SA_SUITE (full ASR stack co-resident)  14,823 MiB @ 60s audio
+  #   A_ER_EMOTION_RECOG                       10,224 MiB @ 60s audio
+  # A_SA_SUITE fits nothing smaller than the ~22.5 GiB slot, which is the whole
+  # reason this profile exists. Note that ModelAgent never frees a loaded model
+  # (global.cleanup_model_memory is false), so a pod serving several job types
+  # holds the SUM of their footprints — size a pool against the job types it is
+  # actually routed, not against one number from the table.
+  time-sliced-2: |-
     version: v1
     flags:
       migStrategy: none
@@ -37,4 +47,4 @@ data:
       timeSlicing:
         resources:
           - name: nvidia.com/gpu
-            replicas: 8
+            replicas: 2
