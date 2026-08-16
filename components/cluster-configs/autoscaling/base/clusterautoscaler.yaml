@@ -18,10 +18,9 @@ spec:
   #   2 gpu (spot)              gx3-16x80x1l4      32 cores /  160 GiB
   #   2 workergpu-1 (fallback)  gx3-16x80x1l4      32 cores /  160 GiB
   #   2 gpu-l40s-4  (spot)      gx3-24x120x1l40s   48 cores /  240 GiB
-  #   2 gpu-l40s-8  (spot)      gx3-24x120x1l40s   48 cores /  240 GiB
-  #   2 gpu-2l4-4   (spot)      gx3-32x160x2l4     64 cores /  320 GiB
-  #   2 gpu-2l4-8   (spot)      gx3-32x160x2l4     64 cores /  320 GiB
-  #                                          = 30 nodes / 576 cores / 2592 GiB
+  #   2 gpu-l40s-2  (spot)      gx3-24x120x1l40s   48 cores /  240 GiB
+  #   2 gpu-2l4-2   (spot)      gx3-32x160x2l4     64 cores /  320 GiB
+  #                                          = 28 nodes / 512 cores / 2272 GiB
   # These are guard rails, not reservations — nothing is provisioned until a
   # pending pod justifies it, so headroom costs nothing and a limit that binds
   # unexpectedly costs an outage. The ceilings sit above the sum for the same
@@ -40,10 +39,10 @@ spec:
     maxNodesTotal: 36
     cores:
       min: 0
-      max: 640
+      max: 576
     memory:
       min: 0
-      max: 2880
+      max: 2560
     # Matches the workergpu-1 MachineAutoscaler's maxReplicas (1 L4 per node).
     # ARCH-521: the type here is NOT the extended resource name — the autoscaler
     # accounts GPU limits under the value of the node's `cluster-api/accelerator`
