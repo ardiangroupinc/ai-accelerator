@@ -10,3 +10,22 @@ spec:
   name: rhcl-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
+  # ARCH-574: the bundle ships the manager at 300Mi/200m, which is not enough to
+  # get through its initial informer sync on us-east-1. It peaked at 283-299 MiB
+  # and was OOMKilled ~34s in, 22+ times, which deadlocked the v1.4.2 upgrade:
+  # OLM sat in InstallWaiting for a Deployment that could never reach minimum
+  # availability. CPU matters here too — a 200m limit throttles the initial list
+  # and unmarshal, which stretches the sync and holds the peak for longer.
+  #
+  # Set on the Subscription rather than the Deployment because the Deployment is
+  # owned by the CSV: a direct edit is reverted, and reinstalls drop it. OLM
+  # re-applies spec.config.resources to every container in the operator's
+  # deployment (kuadrant-operator runs a single `manager` container).
+  config:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
