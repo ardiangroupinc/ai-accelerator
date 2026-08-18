@@ -16,11 +16,13 @@ spec:
         values:
           name: connectivity-link-operator
           path: components/operators/redhat-connectivity-link/aggregate/overlays/auth
-      - cluster: local
-        url: https://kubernetes.default.svc
-        values:
-          name: kiali-operator
-          path: components/operators/kiali-operator/operator/overlays/stable
+      # Comment out kiali; servicemesh is not deployed here so there is no mesh
+      # for it to observe (ARCH-584)
+      # - cluster: local
+      #   url: https://kubernetes.default.svc
+      #   values:
+      #     name: kiali-operator
+      #     path: components/operators/kiali-operator/operator/overlays/stable
       - cluster: local
         url: https://kubernetes.default.svc
         values:
