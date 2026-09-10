@@ -34,3 +34,31 @@
 - op: replace
   path: /spec/resourceLimits/memory/max
   value: 2816
+
+# ARCH-589. Also cluster-specific: this is the VP hub, and the hub is where the
+# imperative framework's unsealvault-cronjob runs.
+#
+# That cronjob fires every 5 minutes, takes ~40s, and its pods carry two emptyDir
+# volumes. The autoscaler runs without --skip-nodes-with-local-storage, which
+# defaults to TRUE, so for those 40s the node it landed on cannot be drained and
+# is marked unremovable — which resets its unneeded timer. At unneededTime 5m the
+# node needs five *continuous* unneeded minutes and only ever gets 4m20s, so the
+# timer can never complete and the node is pinned for as long as the cronjob
+# exists. worker-2-dhf6n sat idle for hours on exactly this.
+#
+# It is always the newest node, too: the scheduler's LeastAllocated scoring sends
+# each run to the emptiest node, which is the one the autoscaler just added and
+# is trying to remove.
+#
+# 3m leaves 1m20s of slack in the window. The annotation that would normally fix
+# this (cluster-autoscaler.kubernetes.io/safe-to-evict) is not reachable — the
+# upstream clustergroup chart hardcodes that pod template with no annotation
+# hook, and Argo selfHeal reverts anything set on the live object.
+#
+# This is a floor on how long a node must look idle, not a delay before acting on
+# one: delayAfterAdd (5m) still governs how soon after a scale-up anything can be
+# removed, so a shorter unneededTime cannot make the autoscaler thrash on bursty
+# load.
+- op: replace
+  path: /spec/scaleDown/unneededTime
+  value: 3m
