@@ -67,12 +67,19 @@ data:
   # (14,823 MiB) requires — same usable slot, without an L40S. The cost is the
   # obvious one: a 3,197 MiB deepfake-only pod would hold the entire card, so
   # revisit this if ModelAgent is ever split by job type.
+  #
+  # NOTE THE ABSENT `sharing` BLOCK, and do not "fix" it by adding one with
+  # replicas: 1. The device plugin rejects that outright —
+  #
+  #   unable to parse config file: number of replicas must be >= 2
+  #
+  # — and rejecting it is fatal, not cosmetic: the plugin crash-loops, the node
+  # drops to `allocatable: nvidia.com/gpu 0`, and every GPU pod is evicted with
+  # UnexpectedAdmissionError ("no healthy devices present"). A config carrying
+  # no `sharing` key is how you say "do not slice this card"; the plugin then
+  # advertises the physical GPUs as they are, which on a 1-card node is the one
+  # slot this profile is named for.
   time-sliced-1: |-
     version: v1
     flags:
       migStrategy: none
-    sharing:
-      timeSlicing:
-        resources:
-          - name: nvidia.com/gpu
-            replicas: 1
