@@ -4,6 +4,7 @@ kind: Kustomization
 
 namespace: istio-system
 
-resources:
-  - namespace.yaml
-  - servicemesh-controlplane.yaml
+# Comment out resources to not render servicemesh
+# resources:
+#   - namespace.yaml
+#   - servicemesh-controlplane.yaml

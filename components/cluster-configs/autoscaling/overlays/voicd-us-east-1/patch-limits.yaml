@@ -1,0 +1,36 @@
+---
+# ARCH-575. Applies ONLY to the prod ZTA cluster (us-east-1-mrk95).
+#
+# `overlays/default` is shared with six rhoai-*-aws-gpu clusters, so anything
+# sized from this cluster's node inventory belongs here, not in base.
+#
+# balanceSimilarNodeGroups is required, not cosmetic. Without it the autoscaler
+# grows whichever single node group its expander picks, so all new capacity can
+# land in one zone. Every pool here is replicated per zone (worker-{1,2,3},
+# workerservices-{1,2,3}) and storage is zonal IBM VPC Block bound by
+# WaitForFirstConsumer — a Pending pod holding a PV needs a node in ITS zone
+# specifically, and capacity added anywhere else leaves it Pending while the
+# cluster grows. Balancing keeps similar groups within one node of each other,
+# which is the only behaviour that matches zonal storage.
+- op: add
+  path: /spec/balanceSimilarNodeGroups
+  value: true
+
+# ARCH-575 autoscaled the general worker sets 4-9 in voicdgroupinc/voicd-ops
+# (previously fixed at 2 per zone and scaled by hand). Nine general workers
+# instead of six adds 3 nodes / 48 cores / 192 GiB to the worst case budgeted in
+# base, taking it to 31 nodes / 560 cores / 2464 GiB.
+#
+# Against base's 576 cores that leaves 16 cores of headroom — one node. A
+# ClusterAutoscaler at its limit does not warn, it silently stops scaling every
+# pool, which is the whole reason base carries margin. These restore roughly the
+# margin base has always had: 9 nodes / 80 cores / 352 GiB.
+- op: replace
+  path: /spec/resourceLimits/maxNodesTotal
+  value: 40
+- op: replace
+  path: /spec/resourceLimits/cores/max
+  value: 640
+- op: replace
+  path: /spec/resourceLimits/memory/max
+  value: 2816

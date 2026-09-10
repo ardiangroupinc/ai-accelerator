@@ -22,6 +22,7 @@ spec:
     spec:
       project: cluster-config
       syncPolicy:
+        preserveResourcesOnDeletion: true
         automated:
           prune: false
           selfHeal: true

@@ -4,18 +4,65 @@ metadata:
   name: default
 spec:
   podPriorityThreshold: -10
+  # ARCH-511: these are the cluster-wide ceiling for every MachineAutoscaler, and
+  # they were set below the cluster's actual size — maxNodesTotal was 7 with 7
+  # nodes already running (3 masters + 4 workers), and cores/memory were 96/384
+  # against a real 112/448. A cluster-autoscaler at its limit does not warn; it
+  # simply never scales up, so the voicd-services and GPU pools added in
+  # voicdgroupinc/voicd-ops (openshift/machinesets) could not have grown.
+  #
+  # Sized to the declared maxima of every pool so those bounds are reachable:
+  #   3 masters                 bx2-16x64          48 cores /  192 GiB
+  #   6 general workers         bx2-16x64          96 cores /  384 GiB
+  #   9 voicd-services (3/zone) bx2-16x64         144 cores /  576 GiB
+  #   2 gpu (spot)              gx3-16x80x1l4      32 cores /  160 GiB
+  #   2 workergpu-1 (fallback)  gx3-16x80x1l4      32 cores /  160 GiB
+  #   2 gpu-l40s-4  (spot)      gx3-24x120x1l40s   48 cores /  240 GiB
+  #   2 gpu-l40s-2  (spot)      gx3-24x120x1l40s   48 cores /  240 GiB
+  #   2 gpu-2l4-2   (spot)      gx3-32x160x2l4     64 cores /  320 GiB
+  #                                          = 28 nodes / 512 cores / 2272 GiB
+  # These are guard rails, not reservations — nothing is provisioned until a
+  # pending pod justifies it, so headroom costs nothing and a limit that binds
+  # unexpectedly costs an outage. The ceilings sit above the sum for the same
+  # reason they always have: the general worker sets are scaled by hand
+  # (`oc scale … worker-1`) and a ceiling equal to the current maximum turns any
+  # such bump into a silent scale-up failure for every OTHER pool.
+  #
+  # ARCH-557: five of the pools above are OpsPortal-provisioned spot pools, which
+  # the cluster-autoscaler does not manage and cannot scale. They are budgeted
+  # here anyway, because resourceLimits are evaluated against the resources of
+  # the WHOLE cluster, not just the nodes CA owns — so a spot GPU node consumes
+  # the same cores/memory/node budget that CA needs in order to grow
+  # voicd-services or the workergpu-1 fallback. Leave them out and the GPU pools
+  # quietly starve the pools that do depend on CA.
   resourceLimits:
-    maxNodesTotal: 7
+    maxNodesTotal: 36
     cores:
       min: 0
-      max: 96
+      max: 576
     memory:
       min: 0
-      max: 384
+      max: 2560
+    # Matches the workergpu-1 MachineAutoscaler's maxReplicas (1 L4 per node).
+    # ARCH-521: the type here is NOT the extended resource name — the autoscaler
+    # accounts GPU limits under the value of the node's `cluster-api/accelerator`
+    # label (a label value cannot contain "/", so nvidia.com/gpu could never
+    # match). Must stay in sync with the label set on workergpu-1 in
+    # voicdgroupinc/voicd-ops (openshift/machinesets/workergpu-1.yaml).
+    #
+    # ARCH-557: only workergpu-1 appears here. GPU limits are accounted per
+    # accelerator-label value, and the OpsPortal spot GPU nodes carry no
+    # `cluster-api/accelerator` label at all (their labels come from the pool's
+    # node_selector), so they are invisible to this limit — deliberately: CA
+    # cannot scale those pools, and a ceiling it cannot act on only misleads.
+    # Their cores/memory/node cost is budgeted in resourceLimits above instead.
     gpus:
-      - type: nvidia.com/gpu
+      # ARCH-526: with device-plugin time-slicing (replicas: 4, see the
+      # gpu-operator-certified instance config) the autoscaler counts VIRTUAL
+      # GPUs — each physical L4 shows as 4. Max = 2 nodes x 4 slots.
+      - type: nvidia-l4
         min: 0
-        max: 2
+        max: 8
   scaleDown:
     enabled: true
     delayAfterAdd: 5m

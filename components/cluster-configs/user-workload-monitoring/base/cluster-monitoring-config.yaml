@@ -5,3 +5,35 @@ metadata:
 data:
   config.yaml: |
     enableUserWorkload: true
+    prometheusK8s:
+      # Storage sizing, measured 2026-07-30 on us-east-1:
+      #   1.26M active series, ~39.4k samples/sec, 3.89 GiB/day
+      #   14d steady state = 54.5 GiB  ->  100Gi volume leaves ~80% headroom
+      #
+      # Previously prometheus-k8s-db was emptyDir (no PVC), so TSDB data landed
+      # on the node filesystem. At the default 15d it reached ~58 GiB per replica
+      # and pushed workers into DiskPressure, evicting unrelated workloads.
+      retention: 14d
+      # Hard backstop: sits above the 14d steady state but well below the volume,
+      # so if ingestion grows Prometheus drops old blocks instead of filling the
+      # disk. Retention degrades gracefully; the volume never fills.
+      retentionSize: 80GB
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ibmc-vpc-block-10iops-tier
+          resources:
+            requests:
+              storage: 100Gi
+      # Measured RSS was 8.28 GiB against a 1Gi request, which made Prometheus a
+      # prime eviction candidate under memory pressure. Request reflects reality.
+      resources:
+        requests:
+          cpu: 500m
+          memory: 10Gi
+    alertmanagerMain:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ibmc-vpc-block-10iops-tier
+          resources:
+            requests:
+              storage: 20Gi

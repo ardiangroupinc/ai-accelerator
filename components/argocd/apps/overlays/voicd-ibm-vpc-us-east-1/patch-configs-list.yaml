@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-configs
+spec:
+  generators:
+  - list:
+      elements:
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: user-workload-monitoring
+          path: components/cluster-configs/user-workload-monitoring/overlays/default
+      - cluster: local
+        url: https://kubernetes.default.svc
+        values:
+          name: cluster-autoscaling
+          # ARCH-575: this cluster's own overlay, not the shared `default`.
+          # `default` is used by the six rhoai-*-aws-gpu clusters as well, and the
+          # autoscaler limits here are sized from this cluster's node inventory.
+          path: components/cluster-configs/autoscaling/overlays/voicd-us-east-1
