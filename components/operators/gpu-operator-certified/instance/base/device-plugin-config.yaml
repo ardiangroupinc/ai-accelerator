@@ -48,3 +48,31 @@ data:
         resources:
           - name: nvidia.com/gpu
             replicas: 2
+  # The whole card as ONE slot — no split. Opt-in per node via the label
+  # `nvidia.com/device-plugin.config: time-sliced-1`; the ClusterPolicy default
+  # stays time-sliced-4, so adding this profile changes no existing node.
+  #
+  # Why a 1-slot profile exists at all, when the point of time-slicing was to
+  # fit several pods on a card: a pod whose resident set exceeds the slot size
+  # is not caught by anything. Time-slicing shares the compute engine, not the
+  # memory — there is no per-slot VRAM quota, so the first pod to load simply
+  # takes what it asks for and later pods fail at cudaMalloc. Observed on the
+  # us-east-1 L4 (1x 23,034 MiB, 4 slots of ~5.6 GiB nominal): one ModelAgent
+  # serving the deepfake + emotion + WhisperX set held 14,122 MiB — 2.5x its
+  # nominal slot — and the second pod died loading Whisper with 6 MiB free,
+  # then stayed Ready and served results with no transcript.
+  #
+  # So this is the pool shape for a card with ONE tenant that needs most of it.
+  # It is the L4 equivalent of the ~22.5 GiB gpu-l40s-2 slot that A_SA_SUITE
+  # (14,823 MiB) requires — same usable slot, without an L40S. The cost is the
+  # obvious one: a 3,197 MiB deepfake-only pod would hold the entire card, so
+  # revisit this if ModelAgent is ever split by job type.
+  time-sliced-1: |-
+    version: v1
+    flags:
+      migStrategy: none
+    sharing:
+      timeSlicing:
+        resources:
+          - name: nvidia.com/gpu
+            replicas: 1
