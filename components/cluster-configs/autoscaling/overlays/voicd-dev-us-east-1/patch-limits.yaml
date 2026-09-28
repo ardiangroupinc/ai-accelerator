@@ -3,9 +3,10 @@
 # infraID us-east-1-8wpwv). Prod's equivalent is ../voicd-us-east-1.
 #
 # Same behaviour as prod, sized for dev's node inventory:
-#   masters 3x mx2-4x32 (12c/96Gi) + general worker-{1,2,3} 1-2 per zone (6x bx2-16x64)
-#   + workerservices-{1,2,3} 0-1 per zone (3x bx2-16x64) + workergpu-1 0-2 (gx3-16x80x1l4)
-#   = 14 nodes / 188 cores / 832 GiB worst case.
+#   masters 3x mx2-4x32 (12c/96Gi) + general worker-{1,2,3} FIXED at 1 per zone (3x bx2-16x64,
+#   not autoscaled on dev: no MachineAutoscaler) + workerservices-{1,2,3} 0-1 per zone
+#   (3x bx2-16x64) + workergpu-1 0-2 (gx3-16x80x1l4)
+#   = 11 nodes / 140 cores / 640 GiB worst case.
 # cores/memory carry one bx2-16x64 node of margin: an autoscaler at a limit does not warn,
 # it silently stops scaling every pool (see the prod overlay).
 
@@ -16,13 +17,13 @@
 
 - op: replace
   path: /spec/resourceLimits/maxNodesTotal
-  value: 14
+  value: 11
 - op: replace
   path: /spec/resourceLimits/cores/max
-  value: 208
+  value: 156
 - op: replace
   path: /spec/resourceLimits/memory/max
-  value: 896
+  value: 704
 # One L4 per workergpu node, 0-2 nodes.
 - op: replace
   path: /spec/resourceLimits/gpus/0/max
