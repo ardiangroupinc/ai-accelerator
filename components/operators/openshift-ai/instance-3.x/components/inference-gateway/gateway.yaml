@@ -5,6 +5,12 @@ metadata:
   namespace: openshift-ingress
 spec:
   gatewayClassName: data-science-gateway-class
+  # Keep the generated LoadBalancer Service off the internet. Without this, IBM Cloud
+  # defaults the Service to a PUBLIC VPC load balancer (port 80 open to the world), even on a
+  # publish: Internal cluster. Other platforms ignore the annotation.
+  infrastructure:
+    annotations:
+      service.kubernetes.io/ibm-load-balancer-cloud-provider-ip-type: private
   listeners:
     - name: http
       port: 80
