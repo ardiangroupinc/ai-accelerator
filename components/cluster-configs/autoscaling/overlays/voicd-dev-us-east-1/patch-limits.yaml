@@ -1,0 +1,35 @@
+---
+# ARCH-712. Applies ONLY to the DEV ZTA cluster (us-east-1.voicddev.app,
+# infraID us-east-1-8wpwv). Prod's equivalent is ../voicd-us-east-1.
+#
+# Same behaviour as prod, sized for dev's node inventory:
+#   masters 3x mx2-4x32 (12c/96Gi) + general worker-{1,2,3} 1-2 per zone (6x bx2-16x64)
+#   + workerservices-{1,2,3} 0-1 per zone (3x bx2-16x64) + workergpu-1 0-2 (gx3-16x80x1l4)
+#   = 14 nodes / 188 cores / 832 GiB worst case.
+# cores/memory carry one bx2-16x64 node of margin: an autoscaler at a limit does not warn,
+# it silently stops scaling every pool (see the prod overlay).
+
+# Zonal IBM VPC Block storage: keep per-zone groups balanced (prod ARCH-575).
+- op: add
+  path: /spec/balanceSimilarNodeGroups
+  value: true
+
+- op: replace
+  path: /spec/resourceLimits/maxNodesTotal
+  value: 14
+- op: replace
+  path: /spec/resourceLimits/cores/max
+  value: 208
+- op: replace
+  path: /spec/resourceLimits/memory/max
+  value: 896
+# One L4 per workergpu node, 0-2 nodes.
+- op: replace
+  path: /spec/resourceLimits/gpus/0/max
+  value: 2
+
+# Dev is also the VP hub, so the 5-minute unsealvault cronjob pins nodes at
+# unneededTime 5m exactly as on prod (ARCH-589). Same fix.
+- op: replace
+  path: /spec/scaleDown/unneededTime
+  value: 3m

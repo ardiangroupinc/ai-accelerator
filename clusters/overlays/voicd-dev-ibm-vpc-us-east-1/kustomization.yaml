@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Dev: the pattern's cluster-wide Argo CD is vp-gitops (patterns-operator v0.0.80), not
+# openshift-gitops as on prod. ai-accelerator creates no Argo instance of its own (the rhdp
+# instance overlay is empty so LZTVP owns GitOps), so its apps must live where one runs.
+namespace: vp-gitops
+
+resources:
+  - ../../../components/argocd/apps/overlays/voicd-dev-ibm-vpc-us-east-1
+  - ../../base
+patches:
+# set the repo and branch for applications
+# Uncomment patches to disable automatic sync
+- path: patch-applicationset-manual-sync.yaml
+  target:
+    group: argoproj.io
+    version: v1alpha1
+    kind: ApplicationSet
+- path: patch-application-manual-sync.yaml
+  target:
+    group: argoproj.io
+    kind: Application
+    version: v1alpha1
+
+# Git repository configuration (single source of truth)
+
+configMapGenerator:
+  - name: gitops-repo-config
+    literals:
+      - repoURL=https://github.com/ardiangroupinc/ai-accelerator.git
+      - targetRevision=ARCH-712/dev-us-east-1
+
+replacements:
+  # copy the repo from the application to the applicationsets
+  - source:
+      kind: ConfigMap
+      fieldPath: data.repoURL
+      name: gitops-repo-config
+    targets:
+      - select:
+          kind: Application
+        fieldPaths:
+          - spec.source.repoURL
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.template.spec.source.repoURL
+  # copy the branch from the application to the applicationsets
+  - source:
+      kind: ConfigMap
+      fieldPath: data.targetRevision
+      name: gitops-repo-config
+    targets:
+      - select:
+          kind: Application
+        fieldPaths:
+          - spec.source.targetRevision
+      - select:
+          kind: ApplicationSet
+        fieldPaths:
+          - spec.template.spec.source.targetRevision
